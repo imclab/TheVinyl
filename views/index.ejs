@@ -1,0 +1,102 @@
+<body>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+				<a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</a>
+				<a class="brand" href="#">The Vinyl</a>
+				<div class="nav-collapse">
+					<ul class="nav">
+						<li class="active"><a href="#">Home</a></li>
+						<li><a href="#about">About</a></li>
+						<li><a href="#contact">Contact</a></li>
+					</ul>
+				</div><!--/.nav-collapse -->
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="span12"><h1>FLAC Song Player</h1></div>
+		</div>
+		<div class="row">
+			<div class="span2"><p>Artist: <span id="artist"></span></p></div>
+			<div class="span2"><p>Song: <span id="song"></span></p></div>
+			<div class="span2"><p>Time: <span id="time"></span></p></div>
+			<div class="span2"><p>Format: <span id="format"></span></p></div>
+		</div>
+		<div class="row">
+			<div class="progress progress-info">
+				<div class="bar" id="loadBar"
+				style="width: 0%;"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="progress progress-sucess" id="timeBarContainer">
+				<div class="bar" id="timeBar"
+				style="width: 0%;"></div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="span1"><i class="icon-play"></i></div>
+			<div class="span1"><i class="icon-pause"></i></div>
+		</div>
+		<script>
+			$(document).ready(function () {
+				// Chrome doesn't support changing the sample rate, and uses whatever the hardware supports.
+				// We cheat here.  Instead of resampling on the fly, we're currently just loading two different
+				// files based on common hardware sample rates.
+				var _sampleRate = (function() {
+					var AudioContext = (window.AudioContext || window.webkitAudioContext);
+					if (!AudioContext)
+						return 44100;
+
+					return new AudioContext().sampleRate;
+				}());
+
+				var url = '/media/test-'+_sampleRate+'hz-16bit.flac';
+				//url = '/media/test.flac';
+				console.log(url);
+				var player = Player.fromURL(url);
+				player.volume = 100;
+				player.preload();
+				player.play();
+
+				player.on('progress', function(time) {
+					var secs = time/1000;
+					var duration = player.duration;
+					var durSecs = duration/1000;
+					var loc = time/duration*100;
+					$("#timeBar").css('width',loc+'%');
+					var progressTimeDisplay = Math.floor(secs/60)+":"+Math.floor(secs-Math.floor(secs/60)*60)
+					var totalTimeDisplay = Math.floor(durSecs/60)+":"+Math.floor(durSecs-Math.floor(durSecs/60)*60)
+					$("#time").text(progressTimeDisplay+" - "+totalTimeDisplay);
+					$("#artist").text(player.metadata.ARTIST);
+					$("#song").text(player.metadata.TITLE);
+					$("#format").text(player.format.formatID + " " + player.format.sampleRate + "Hz " + player.format.bitsPerChannel + "bit");
+				});
+
+				player.on('buffer', function(time) {
+					$("#loadBar").css('width',time+'%');
+				});
+
+				$(".row").on("click", "#timeBarContainer", function(event){
+					var percentClick = event.offsetX/$(this).width();
+					var duration = player.duration;
+					var newTime = percentClick*duration;
+					console.log(newTime);
+				});
+
+				$(".row").on("click", ".icon-play", function(event){
+					 player.play();
+				});
+				$(".row").on("click", ".icon-pause", function(event){
+					 player.pause();
+				});
+			});
+		</script>
+	</div>
+</body>
