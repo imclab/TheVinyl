@@ -7,6 +7,7 @@ The future of internet music built for the muscians and the music lovers.
 
 	* ejs
 	* express
+	* express-resource
 	* mongoose
 	* socket.io
 	* gzippo
@@ -14,8 +15,7 @@ The future of internet music built for the muscians and the music lovers.
 
 	All other dependencies are already in the repository.
 
-	Use command: 'npm install ejs express mongoose socket.io gzippo passport'
-	to install all the necessary dependencies.
+	Use command: 'npm install ejs express express-resource mongoose socket.io gzippo passport' to install all the necessary dependencies.
 
 # Info
 
