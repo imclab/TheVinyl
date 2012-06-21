@@ -12,12 +12,10 @@ The future of internet music built for the muscians and the music lovers.
 	* socket.io
 	* gzippo
 	* passport
+	* passport-facebook
+	* passport-local
 
-	All other dependencies are already in the repository.
-
-	Use command: 
-	'npm install ejs express express-resource mongoose socket.io gzippo passport' 
-	to install all the necessary dependencies.
+	All other dependencies are already in the repository or installed automatically.
 
 # Info
 
