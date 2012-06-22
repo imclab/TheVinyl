@@ -19,10 +19,16 @@ var gzippo = require('gzippo');
 
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema;
-var UserSchema = new Schema({});
+var UserSchema = new Schema({
+    type      : String
+  , loginId   : Number
+  , username  : String
+  , name      : String
+  , password  : String
+  , date      : Date
+});
 mongoose.connect('mongodb://localhost/thevinyl');
-mongoose.model('User', UserSchema);
-User = mongoose.model('User');
+var User = mongoose.model('User', UserSchema);
 
 //passport.js stuff
 var passport = require('passport')
@@ -35,25 +41,70 @@ passport.use(new FacebookStrategy({
     callbackURL: "http://localhost:8080/auth/facebook/callback"
   },
   function(accessToken, refreshToken, profile, done) {
+    /*
+    console.log("DONE: "+done);
+    for (item in profile) {
+      console.log(item+": "+profile[item]);
+    }
+    */
+    User.findOne({loginId: profile.id}, function (err, account){
+      //console.log("doc: "+account);
+      if (err) { return done(err); }
+      if (account) {
+        return done(null, account);
+      } else {
+        var newAccount = new User();
+        newAccount.type = 'facebook'
+        newAccount.name = profile.displayName;
+        newAccount.username = "";
+        newAccount.password = "";
+        newAccount.loginId = profile.id;
+        newAccount.date = new Date();
+        newAccount.save(function (err) {
+          if (err) {
+            console.log("ERROR: something went wrong when adding new person from Facebook to the database. User: "+profile.displayName)
+          }
+        });
+        return done(null, newAccount)
+      }
+    });
+    /*
     User.findOrCreate({profile: profile}, function (err, user) {
       if (err) { return done(err); }
       done(null, user);
     });
+*/
   }
 ));
 
+passport.serializeUser(function(user, done) {
+  done(null, user.loginId);
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findOne({loginId: id}, function (err, user) {
+    done(err, user);
+  });
+});
+
 passport.use(new LocalStrategy(
   function(username, password, done) {
-    User.findOne({ username: username }, function(err, user) {
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Unknown user' });
-      }
-      if (!user.validPassword(password)) {
-        return done(null, false, { message: 'Invalid password' });
-      }
-      return done(null, user);
-    });
+    console.log("username: "+username);
+    console.log("password: "+password);
+    if (username) {
+      User.findOne({ username: username }, function(err, user) {
+        if (err) { return done(err); }
+        if (!user) {
+          return done(null, false, { message: 'Unknown user' });
+        }
+        if (!user.validPassword(password)) {
+          return done(null, false, { message: 'Invalid password' });
+        }
+        return done(null, user);
+      });
+    } else {
+      return done(null, false, { message: 'Empty username' });
+    }
   }
 ));
 
@@ -81,16 +132,28 @@ io.enable('browser client minification');
 io.enable('browser client etag');
 
 app.get("/", function (req, res) {
-	res.render("index", { layout: 'layoutMain' });
+	if (req.user) {
+    res.render("index", { layout: 'layoutMain', username: req.user.name });
+  } else {
+    res.render("index", { layout: 'layoutMain', username: "" });
+  }
+});
+app.get("/login", function (req, res) {
+  if (req.user) {
+    res.render("login", { layout: 'layoutMain', username: req.user.name });
+  } else {
+    res.render("login", { layout: 'layoutMain', username: "" });
+  }
 });
 app.get('/auth/facebook', passport.authenticate('facebook'));
 app.get('/auth/facebook/callback', 
   passport.authenticate('facebook', { successRedirect: '/',
                                       failureRedirect: '/login' }));
-app.get('/auth/local', passport.authenticate('facebook'));
-app.get('/auth/local/callback', 
+app.post('/login-local',
   passport.authenticate('local', { successRedirect: '/',
-                                      failureRedirect: '/login' }));
+                                   failureRedirect: '/login',
+                                   failureFlash: 'Invalid credentials' })
+);
 
 function dirExistsSync (d) { 
 	try { fs.statSync(d); return true } 
