@@ -21,11 +21,14 @@ var mongoose = require('mongoose')
 var Schema = mongoose.Schema;
 var UserSchema = new Schema({
     type      : String
-  , loginId   : Number
+  , fbId      : Number
+  , picture   : String
   , username  : String
   , name      : String
   , password  : String
   , date      : Date
+  , songsOwned: Array
+  , songUploaded: Array
 });
 mongoose.connect('mongodb://localhost/thevinyl');
 var User = mongoose.model('User', UserSchema);
@@ -47,25 +50,26 @@ passport.use(new FacebookStrategy({
       console.log(item+": "+profile[item]);
     }
     */
-    User.findOne({loginId: profile.id}, function (err, account){
+    User.findOne({fbId: profile.id}, function (err, account){
       //console.log("doc: "+account);
       if (err) { return done(err); }
       if (account) {
         return done(null, account);
       } else {
         var newAccount = new User();
-        newAccount.type = 'facebook'
+        newAccount.type = 'facebook';
+        newAccount.picture = 'https://graph.facebook.com/'+ profile.id +'/picture'
         newAccount.name = profile.displayName;
         newAccount.username = "";
         newAccount.password = "";
-        newAccount.loginId = profile.id;
+        newAccount.fbId = profile.id;
         newAccount.date = new Date();
         newAccount.save(function (err) {
           if (err) {
             console.log("ERROR: something went wrong when adding new person from Facebook to the database. User: "+profile.displayName)
           }
+          return done(null, newAccount)
         });
-        return done(null, newAccount)
       }
     });
     /*
@@ -78,11 +82,11 @@ passport.use(new FacebookStrategy({
 ));
 
 passport.serializeUser(function(user, done) {
-  done(null, user.loginId);
+  done(null, user._id);
 });
 
 passport.deserializeUser(function(id, done) {
-  User.findOne({loginId: id}, function (err, user) {
+  User.findOne({_id: id}, function (err, user) {
     done(err, user);
   });
 });
@@ -133,23 +137,62 @@ io.enable('browser client etag');
 
 app.get("/", function (req, res) {
 	if (req.user) {
-    res.render("index", { layout: 'layoutMain', username: req.user.name });
+    res.render("index", { layout: 'layoutMain', user: req.user, page: 'home' });
   } else {
-    res.render("index", { layout: 'layoutMain', username: "" });
+    res.render("index", { layout: 'layoutMain', user: undefined, page: 'home' });
   }
 });
 app.get("/login", function (req, res) {
   if (req.user) {
-    res.render("login", { layout: 'layoutMain', username: req.user.name });
+    res.redirect('/')
   } else {
-    res.render("login", { layout: 'layoutMain', username: "" });
+    res.render("login", { layout: 'layoutMain', user: undefined, page: 'login' });
   }
+});
+app.get("/profile", function (req, res) {
+  if (req.user) {
+    res.render("profile", { layout: 'layoutMain', user: req.user, page: 'profile' });
+  } else {
+    res.redirect('/login');
+  }
+});
+app.get("/logout", function (req, res) {
+  req.logOut();
+  res.redirect('/');
+});
+app.post('/register/local', function (req, res) {
+  var regUser = req.body;
+  User.findOne({username: regUser.username}, function (err, account){
+    console.log(account);
+    //console.log("doc: "+account);
+    if (err) { console.log("Register Error"+err); return; }
+    if (account) {
+      res.redirect('/login'); 
+    } else {
+      console.log('derp');
+      var newAccount = new User();
+      newAccount.type = 'local';
+      newAccount.picture = '/img/test.jpg';
+      newAccount.name = regUser.name;
+      newAccount.username = regUser.username;
+      newAccount.password = regUser.password;
+      newAccount.fbId = "";
+      newAccount.date = new Date();
+      console.log(newAccount);
+      newAccount.save(function (err) {
+        if (err) {
+          console.log("ERROR: something went wrong when adding new person from Local to the database. User: "+regUser.name)
+        }
+        res.redirect('/login');
+      });
+    }
+  });
 });
 app.get('/auth/facebook', passport.authenticate('facebook'));
 app.get('/auth/facebook/callback', 
   passport.authenticate('facebook', { successRedirect: '/',
                                       failureRedirect: '/login' }));
-app.post('/login-local',
+app.post('/auth/local',
   passport.authenticate('local', { successRedirect: '/',
                                    failureRedirect: '/login',
                                    failureFlash: 'Invalid credentials' })

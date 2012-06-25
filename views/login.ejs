@@ -1,0 +1,30 @@
+<div class="container">
+	<div class = "row">
+		<h2>New User</h2>
+	</div>
+	<div class = "row">
+		<form class="well form-inline" action="/register/local" method="post">
+			<input type="text" class="input-medium" name="username" placeholder="Username">
+			<input type="password" class="input-medium" name="password" placeholder="Password">
+			<input type="text" class="input-medium" name="email" placeholder="Email">
+			<input type="text" class="input-medium" name="name" placeholder="Name/Nickname">
+			<button type="submit" class="btn">Register</button>
+		</form>
+	</div>
+	<div class = "row">
+		<h2>Returning User</h2>
+	</div>
+	<div class = "row">
+		<form class="well form-inline" action="/auth/local" method="post">
+			<input type="text" class="input-medium" name="username" placeholder="Username">
+			<input type="password" class="input-medium" name="password" placeholder="Password">
+			<label class="checkbox">
+				<input type="checkbox" name="rememberMe"> Remember me
+			</label>
+			<button type="submit" class="btn">Sign in</button>
+		</form>
+	</div>
+	<div class="row">
+		<a href="/auth/facebook"><img src="/img/Facebook.png"></a>
+	</div>
+</div>
