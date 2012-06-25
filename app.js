@@ -17,7 +17,8 @@ var crypto = require('crypto');
 //gzippo, gzip middleware for express
 var gzippo = require('gzippo');
 
-var mongoose = require('mongoose')
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/thevinyl');
 var Schema = mongoose.Schema;
 var UserSchema = new Schema({
     type      : String
@@ -29,8 +30,16 @@ var UserSchema = new Schema({
   , date      : Date
   , songsOwned: Array
 });
-mongoose.connect('mongodb://localhost/thevinyl');
 var User = mongoose.model('User', UserSchema);
+
+var SongSchema = new Schema({
+    title     : String
+  , uploader  : String
+  , album     : String
+  , coverArt  : String
+  , 
+});
+var Song = mongoose.model('Song', SongSchema);
 
 //passport.js stuff
 var passport = require('passport')
