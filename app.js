@@ -110,6 +110,7 @@ passport.use(new LocalStrategy(
 
 //start express
 app.configure(function() {
+	app.set('views', __dirname + '/views');
 	app.set('view options', { layout: false});
 	app.set('view engine', 'ejs');
 	app.use(express.cookieParser());
@@ -119,7 +120,6 @@ app.configure(function() {
 	app.use(passport.session());
 	app.use(app.router);
 	app.use(gzippo.staticGzip(__dirname + '/static'));
-	app.set('views', __dirname + '/views');
 	app.use(gzippo.compress());
 });
 
