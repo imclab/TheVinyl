@@ -28,7 +28,6 @@ var UserSchema = new Schema({
   , password  : String
   , date      : Date
   , songsOwned: Array
-  , songUploaded: Array
 });
 mongoose.connect('mongodb://localhost/thevinyl');
 var User = mongoose.model('User', UserSchema);
