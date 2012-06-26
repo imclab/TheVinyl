@@ -152,7 +152,7 @@ app.get("/", function (req, res) {
 });
 app.get("/login", function (req, res) {
   if (req.user) {
-    res.redirect('/')
+    res.redirect('/');
   } else {
     res.render("login", { layout: 'layoutMain', user: undefined, page: 'login' });
   }
