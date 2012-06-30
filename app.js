@@ -220,7 +220,6 @@ function dirExistsSync (d) {
 
 io.sockets.on('connection', function (socket) {
     console.log('connection established');
-
     var readStream = fs.createReadStream(__dirname + "/media/test.flac", 
                                          {'flags': 'r',
                                           'encoding': 'binary', 
@@ -230,6 +229,7 @@ io.sockets.on('connection', function (socket) {
         console.log(typeof data);
         console.log('sending chunk of data')
         socket.send(data);
+        //socket.emit('test', {test: "test"});
     });
 
     socket.on('disconnect', function () {
