@@ -17,6 +17,12 @@ var crypto = require('crypto');
 //gzippo, gzip middleware for express
 var gzippo = require('gzippo');
 
+//require fs
+var fs = require('fs');
+
+//this is how to convert files
+//sox -G test.flac -r 48000 -b 16 -c 2 -t flac test-48k-16b.flac
+
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/thevinyl');
 var Schema = mongoose.Schema;
@@ -142,6 +148,7 @@ io.set('log level', 1);
 io.enable('browser client gzip');
 io.enable('browser client minification');
 io.enable('browser client etag');
+io.set('transports', [ 'websocket' ]);
 
 app.get("/", function (req, res) {
 	if (req.user) {
@@ -210,6 +217,25 @@ function dirExistsSync (d) {
 	try { fs.statSync(d); return true } 
 	catch (er) { return false } 
 }
+
+io.sockets.on('connection', function (socket) {
+    console.log('connection established');
+
+    var readStream = fs.createReadStream(__dirname + "/media/test.flac", 
+                                         {'flags': 'r',
+                                          'encoding': 'binary', 
+                                          'mode': 0666, 
+                                          'bufferSize': 64 * 1024});
+    readStream.on('data', function(data) {
+        console.log(typeof data);
+        console.log('sending chunk of data')
+        socket.send(data);
+    });
+
+    socket.on('disconnect', function () {
+        console.log('connection droped');
+    });
+});
 
 //Set server listening port (need root for port 80)
 app.listen(8080);
