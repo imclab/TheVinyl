@@ -27,70 +27,41 @@
 	<script>
 		$(document).ready(function () {
 
-			var Base64Binary = {
-				_keyStr : "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
-				
-				/* will return a  Uint8Array type */
-				decodeArrayBuffer: function(input) {
-					var bytes = Math.ceil( (3*input.length) / 4.0);
-					var ab = new ArrayBuffer(bytes);
-					this.decode(input, ab);
-					
-					return ab;
-				},
-				
-				decode: function(input, arrayBuffer) {
-					//get last chars to see if are valid
-					var lkey1 = this._keyStr.indexOf(input.charAt(input.length-1));		 
-					var lkey2 = this._keyStr.indexOf(input.charAt(input.length-1));		 
-				
-					var bytes = Math.ceil( (3*input.length) / 4.0);
-					if (lkey1 == 64) bytes--; //padding chars, so skip
-					if (lkey2 == 64) bytes--; //padding chars, so skip
-					
-					var uarray;
-					var chr1, chr2, chr3;
-					var enc1, enc2, enc3, enc4;
-					var i = 0;
-					var j = 0;
-					
-					if (arrayBuffer)
-						uarray = new Uint8Array(arrayBuffer);
-					else
-						uarray = new Uint8Array(bytes);
-					
-					input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-					
-					for (i=0; i<bytes; i+=3) {	
-						//get the 3 octects in 4 ascii chars
-						enc1 = this._keyStr.indexOf(input.charAt(j++));
-						enc2 = this._keyStr.indexOf(input.charAt(j++));
-						enc3 = this._keyStr.indexOf(input.charAt(j++));
-						enc4 = this._keyStr.indexOf(input.charAt(j++));
-				
-						chr1 = (enc1 << 2) | (enc2 >> 4);
-						chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-						chr3 = ((enc3 & 3) << 6) | enc4;
-				
-						uarray[i] = chr1;			
-						if (enc3 != 64) uarray[i+1] = chr2;
-						if (enc4 != 64) uarray[i+2] = chr3;
-					}
-				
-					return uarray;	
-				}
-			}
-
-			function decodeHandler(buffer) {
-		        console.log(data);
-		    }
-
-			var context = new webkitAudioContext();
-
 			var socket = io.connect('/');
+			var num = 0;
+			var source;
+			var asset;
+			var player;
 			socket.on('message', function(data) {
-				data = Base64Binary.decodeArrayBuffer(data);
-				context.decodeAudioData(data, decodeHandler, function(e) { console.log(e); });
+				var abData = new Buffer(convertDataURIToBinary(data));
+				if (num == 0) {
+					// Implement a source (see https://github.com/ofmlabs/aurora.js/wiki/Source-Interface-Reference)
+					var MySource = EventEmitter.extend({
+					    start: function() {
+					        // emit some data
+					        this.emit('data', abData);
+					        this.emit('end');
+					    },
+
+					    pause: function() {
+					        // stop
+					    },
+
+					    reset: function() {}
+					});
+
+					// create a source, asset and player
+					source = new MySource();
+					asset = new Asset(source);
+					player = new Player(asset);
+					console.log(source);
+					player.play();
+					console.log(player);
+				} else {
+					source.emit('data', abData);
+					this.emit('end');
+				}
+				num++;
 			});
 
 			// Chrome doesn't support changing the sample rate, and uses whatever the hardware supports.
@@ -104,6 +75,7 @@
 				return new AudioContext().sampleRate;
 			}());
 
+			/*
 			var url = '/media/test-'+_sampleRate+'-16b.flac';
 			//url = '/media/test.flac';
 			console.log(url);
@@ -140,8 +112,10 @@
 			$(".row").on("click", ".icon-play", function(event){
 				 player.play();
 			});
+*/
 			$(".row").on("click", ".icon-pause", function(event){
-				 player.pause();
+				//player.pause();
+				socket.emit('media', {file: 'test', type: 'flac' })
 			});
 		});
 	</script>

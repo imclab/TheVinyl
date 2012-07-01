@@ -219,22 +219,25 @@ function dirExistsSync (d) {
 }
 
 io.sockets.on('connection', function (socket) {
-    console.log('connection established');
-    var readStream = fs.createReadStream(__dirname + "/media/test.flac", 
-                                         {'flags': 'r',
-                                          'encoding': 'binary', 
-                                          'mode': 0666, 
-                                          'bufferSize': 64 * 1024});
-    readStream.on('data', function(data) {
-        console.log(typeof data);
-        console.log('sending chunk of data')
-        socket.send(data);
-        //socket.emit('test', {test: "test"});
-    });
+  console.log('connection established');
 
-    socket.on('disconnect', function () {
-        console.log('connection droped');
+  socket.on('media', function (data) {
+    var file = data.file;
+    var type = data.type;
+    var readStream = fs.createReadStream(__dirname + "/media/" + file + "." + type, 
+                                         {'flags': 'r',
+                                          'encoding': 'base64', 
+                                          'mode': 0666, 
+                                          'bufferSize': 1024 * 1024});
+    readStream.on('data', function(data) {
+      socket.send(data);
+      //socket.emit('test', {test: "test"});
     });
+  });
+
+  socket.on('disconnect', function () {
+    console.log('connection droped');
+  });
 });
 
 //Set server listening port (need root for port 80)
