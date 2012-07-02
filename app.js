@@ -21,7 +21,7 @@ var gzippo = require('gzippo');
 var fs = require('fs');
 
 //this is how to convert files
-//sox -G test.flac -r 48000 -b 16 -c 2 -t flac test-48k-16b.flac
+//sox -G test.flac -r 48000 -b 16 -c 2 -t flac test-48000-16b.flac
 
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/thevinyl');
@@ -224,11 +224,12 @@ io.sockets.on('connection', function (socket) {
   socket.on('media', function (data) {
     var file = data.file;
     var type = data.type;
-    var readStream = fs.createReadStream(__dirname + "/media/" + file + "." + type, 
-                                         {'flags': 'r',
-                                          'encoding': 'base64', 
+    var bitRate = data.br;
+    var readStream = fs.createReadStream(__dirname + "/media/" + file + "-" + bitRate + "-16b" + "." + type, 
+                                         {'flags': 'r', 
+                                          'encoding': 'base64',
                                           'mode': 0666, 
-                                          'bufferSize': 1024 * 1024});
+                                          'bufferSize': 1024 * 1024 * 1024});
     readStream.on('data', function(data) {
       socket.send(data);
       //socket.emit('test', {test: "test"});

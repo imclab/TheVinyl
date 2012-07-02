@@ -19,6 +19,6 @@ The future of internet music built for the muscians and the music lovers.
 
 # Info
 
-	Tested using Node.js v0.6.19 and MongoDB v2.0.6
+	Tested using Node.js v0.8.1 and MongoDB v2.0.6
 
 	Using any versions newer than these are not guaranteed to work.

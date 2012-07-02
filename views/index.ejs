@@ -26,44 +26,6 @@
 	</div>
 	<script>
 		$(document).ready(function () {
-
-			var socket = io.connect('/');
-			var num = 0;
-			var source;
-			var asset;
-			var player;
-			socket.on('message', function(data) {
-				var abData = new Buffer(convertDataURIToBinary(data));
-				if (num == 0) {
-					// Implement a source (see https://github.com/ofmlabs/aurora.js/wiki/Source-Interface-Reference)
-					var MySource = EventEmitter.extend({
-					    start: function() {
-					        // emit some data
-					        this.emit('data', abData);
-					        this.emit('end');
-					    },
-
-					    pause: function() {
-					        // stop
-					    },
-
-					    reset: function() {}
-					});
-
-					// create a source, asset and player
-					source = new MySource();
-					asset = new Asset(source);
-					player = new Player(asset);
-					console.log(source);
-					player.play();
-					console.log(player);
-				} else {
-					source.emit('data', abData);
-					this.emit('end');
-				}
-				num++;
-			});
-
 			// Chrome doesn't support changing the sample rate, and uses whatever the hardware supports.
 			// We cheat here.  Instead of resampling on the fly, we're currently just loading two different
 			// files based on common hardware sample rates.
@@ -74,6 +36,42 @@
 
 				return new AudioContext().sampleRate;
 			}());
+
+			var MySource = EventEmitter.extend({
+				start: function() {
+					var source = this;
+					source.socket = io.connect('/');
+					var num = 0;
+					source.socket.on('message', function(data) {
+						//var abData = new Buffer(str2ab(data));
+						var abData = new Buffer(Base64Binary.decode(data));
+						source.emit('data', abData);
+						if (num == 0) {
+							console.log(data);
+							console.log(abData);
+						}
+						num++;
+						if (abData.length < 40960) {
+							source.emit('end');
+							console.log(player);
+							console.log(num);
+						}
+					});
+					source.socket.emit('media', {file: 'test', type: 'flac', br: _sampleRate });
+				},
+
+				pause: function() {
+					this.socket.disconnect();
+					delete this.socket;
+				},
+
+				reset: function() {}
+			});
+
+			// create a source, asset and player
+			var source = new MySource();
+			var asset = new Asset(source);
+			var player = new Player(asset);
 
 			/*
 			var url = '/media/test-'+_sampleRate+'-16b.flac';
@@ -108,14 +106,18 @@
 				var newTime = percentClick*duration;
 				console.log(newTime);
 			});
-
-			$(".row").on("click", ".icon-play", function(event){
-				 player.play();
-			});
 */
+			var socket = io.connect('/');
+			$(".row").on("click", ".icon-play", function(event){
+				console.log(player);
+				player.volume = 100;
+				player.preload();
+				player.play();
+			});
+
 			$(".row").on("click", ".icon-pause", function(event){
 				//player.pause();
-				socket.emit('media', {file: 'test', type: 'flac' })
+				socket.emit('media', {file: 'test', type: 'flac', br: _sampleRate })
 			});
 		});
 	</script>
