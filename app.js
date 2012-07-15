@@ -7,6 +7,9 @@ var conf = require('./conf')
 //require path
 var path = require('path');
 
+//binaryjs
+var BinaryServer = require('binaryjs').BinaryServer;
+
 //require express
 var express = require('express');
 var app = express.createServer();
@@ -141,15 +144,6 @@ app.configure(function() {
 	app.use(gzippo.compress());
 });
 
-//require socket.io
-var io = require('socket.io').listen(app);
-//set socket.io log level 1-3
-io.set('log level', 1);
-io.enable('browser client gzip');
-io.enable('browser client minification');
-io.enable('browser client etag');
-io.set('transports', [ 'websocket' ]);
-
 app.get("/", function (req, res) {
 	if (req.user) {
     res.render("index", { layout: 'layoutMain', user: req.user, page: 'home' });
@@ -218,27 +212,19 @@ function dirExistsSync (d) {
 	catch (er) { return false } 
 }
 
-io.sockets.on('connection', function (socket) {
-  console.log('connection established');
+var server = BinaryServer({port: 9000});
 
-  socket.on('media', function (data) {
-    var file = data.file;
-    var type = data.type;
-    var bitRate = data.br;
-    var readStream = fs.createReadStream(__dirname + "/media/" + file + "-" + bitRate + "-16b" + "." + type, 
-                                         {'flags': 'r', 
-                                          'encoding': 'base64',
-                                          'mode': 0666, 
-                                          'bufferSize': 1024 * 1024 * 1024});
-    readStream.on('data', function(data) {
-      socket.send(data);
-      //socket.emit('test', {test: "test"});
-    });
+// Wait for new user connections
+server.on('connection', function(client){
+  
+  console.log('New user connected');
+  
+  // Incoming stream from browsers
+  client.on('stream', function(stream, meta){
+    var file = fs.createReadStream(__dirname + '/static/media/'+meta.file);
+    file.pipe(stream);
   });
-
-  socket.on('disconnect', function () {
-    console.log('connection droped');
-  });
+  
 });
 
 //Set server listening port (need root for port 80)

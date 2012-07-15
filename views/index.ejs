@@ -26,98 +26,16 @@
 	</div>
 	<script>
 		$(document).ready(function () {
-			// Chrome doesn't support changing the sample rate, and uses whatever the hardware supports.
-			// We cheat here.  Instead of resampling on the fly, we're currently just loading two different
-			// files based on common hardware sample rates.
-			var _sampleRate = (function() {
-				var AudioContext = (window.AudioContext || window.webkitAudioContext);
-				if (!AudioContext)
-					return 44100;
+			var vPlayer = new vinylPlayer("test", "flac");
 
-				return new AudioContext().sampleRate;
-			}());
-
-			var MySource = EventEmitter.extend({
-				start: function() {
-					var source = this;
-					source.socket = io.connect('/');
-					var num = 0;
-					source.socket.on('message', function(data) {
-						//var abData = new Buffer(str2ab(data));
-						var abData = new Buffer(Base64Binary.decode(data));
-						source.emit('data', abData);
-						if (num == 0) {
-							console.log(data);
-							console.log(abData);
-						}
-						num++;
-						if (abData.length < 40960) {
-							source.emit('end');
-							console.log(player);
-							console.log(num);
-						}
-					});
-					source.socket.emit('media', {file: 'test', type: 'flac', br: _sampleRate });
-				},
-
-				pause: function() {
-					this.socket.disconnect();
-					delete this.socket;
-				},
-
-				reset: function() {}
-			});
-
-			// create a source, asset and player
-			var source = new MySource();
-			var asset = new Asset(source);
-			var player = new Player(asset);
-
-			/*
-			var url = '/media/test-'+_sampleRate+'-16b.flac';
-			//url = '/media/test.flac';
-			console.log(url);
-			var player = Player.fromURL(url);
-			player.volume = 100;
-			player.preload();
-			player.play();
-
-			player.on('progress', function(time) {
-				var secs = time/1000;
-				var duration = player.duration;
-				var durSecs = duration/1000;
-				var loc = time/duration*100;
-				$("#timeBar").css('width',loc+'%');
-				var progressTimeDisplay = Math.floor(secs/60)+":"+Math.floor(secs-Math.floor(secs/60)*60)
-				var totalTimeDisplay = Math.floor(durSecs/60)+":"+Math.floor(durSecs-Math.floor(durSecs/60)*60)
-				$("#time").text(progressTimeDisplay+" - "+totalTimeDisplay);
-				$("#artist").text(player.metadata.ARTIST);
-				$("#song").text(player.metadata.TITLE);
-				$("#format").text(player.format.formatID + " " + player.format.sampleRate + "Hz " + player.format.bitsPerChannel + "bit");
-			});
-
-			player.on('buffer', function(time) {
-				$("#loadBar").css('width',time+'%');
-			});
-
-			$(".row").on("click", "#timeBarContainer", function(event){
-				var percentClick = event.offsetX/$(this).width();
-				var duration = player.duration;
-				var newTime = percentClick*duration;
-				console.log(newTime);
-			});
-*/
-			var socket = io.connect('/');
 			$(".row").on("click", ".icon-play", function(event){
-				console.log(player);
-				player.volume = 100;
-				player.preload();
-				player.play();
+				console.log(vPlayer);
+				vPlayer.volume(100);
+				vPlayer.play();
 			});
 
 			$(".row").on("click", ".icon-pause", function(event){
-				//player.pause();
-				socket.emit('media', {file: 'test', type: 'flac', br: _sampleRate })
+				vPlayer.pause();
 			});
 		});
 	</script>

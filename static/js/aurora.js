@@ -1,5 +1,7 @@
-var Base;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; }, __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (__hasProp.call(this, i) && this[i] === item) return i; } return -1; };
+var Base,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 Base = (function() {
   var fnTest;
@@ -10,17 +12,17 @@ Base = (function() {
 
   Base.extend = function(prop) {
     var Class, fn, key, keys, _ref, _super;
-    Class = (function() {
+    Class = (function(_super) {
 
-      __extends(Class, this);
+      __extends(Class, _super);
 
       function Class() {
-        Class.__super__.constructor.apply(this, arguments);
+        return Class.__super__.constructor.apply(this, arguments);
       }
 
       return Class;
 
-    }).call(this);
+    })(this);
     if (typeof prop === 'function') {
       keys = Object.keys(Class.prototype);
       prop.call(Class, Class);
@@ -28,7 +30,9 @@ Base = (function() {
       _ref = Class.prototype;
       for (key in _ref) {
         fn = _ref[key];
-        if (__indexOf.call(keys, key) < 0) prop[key] = fn;
+        if (__indexOf.call(keys, key) < 0) {
+          prop[key] = fn;
+        }
       }
     }
     _super = Class.__super__;
@@ -55,6 +59,8 @@ Base = (function() {
   return Base;
 
 })();
+
+
 
 var Buffer;
 
@@ -119,6 +125,8 @@ Buffer = (function() {
 
 })();
 
+
+
 var BufferList;
 
 BufferList = (function() {
@@ -153,7 +161,9 @@ BufferList = (function() {
     this.buffers.push(buffer);
     this.availableBytes += buffer.length;
     this.availableBuffers += 1;
-    if (!this.first) this.first = buffer;
+    if (!this.first) {
+      this.first = buffer;
+    }
     return this;
   };
 
@@ -168,6 +178,8 @@ BufferList = (function() {
   return BufferList;
 
 })();
+
+
 
 var Stream;
 
@@ -248,40 +260,48 @@ Stream = (function() {
 
   Stream.prototype.peekUInt8 = function(offset) {
     var buffer, list, _i, _len;
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     offset = this.localOffset + offset;
     list = this.list.buffers;
     for (_i = 0, _len = list.length; _i < _len; _i++) {
       buffer = list[_i];
-      if (buffer.length > offset) return buffer.data[offset];
+      if (buffer.length > offset) {
+        return buffer.data[offset];
+      }
       offset -= buffer.length;
     }
     return 0;
   };
 
   Stream.prototype.read = function(bytes, littleEndian) {
-    var i, _ref;
-    if (littleEndian == null) littleEndian = false;
+    var i, _i, _j, _ref;
+    if (littleEndian == null) {
+      littleEndian = false;
+    }
     if (littleEndian === nativeEndian) {
-      for (i = 0; i < bytes; i += 1) {
+      for (i = _i = 0; _i < bytes; i = _i += 1) {
         uint8[i] = this.readUInt8();
       }
     } else {
-      for (i = _ref = bytes - 1; i >= 0; i += -1) {
+      for (i = _j = _ref = bytes - 1; _j >= 0; i = _j += -1) {
         uint8[i] = this.readUInt8();
       }
     }
   };
 
   Stream.prototype.peek = function(bytes, offset, littleEndian) {
-    var i;
-    if (littleEndian == null) littleEndian = false;
+    var i, _i, _j;
+    if (littleEndian == null) {
+      littleEndian = false;
+    }
     if (littleEndian === nativeEndian) {
-      for (i = 0; i < bytes; i += 1) {
+      for (i = _i = 0; _i < bytes; i = _i += 1) {
         uint8[i] = this.peekUInt8(offset + i);
       }
     } else {
-      for (i = 0; i < bytes; i += 1) {
+      for (i = _j = 0; _j < bytes; i = _j += 1) {
         uint8[bytes - i - 1] = this.peekUInt8(offset + i);
       }
     }
@@ -293,7 +313,9 @@ Stream = (function() {
   };
 
   Stream.prototype.peekInt8 = function(offset) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     this.peek(1, offset);
     return int8[0];
   };
@@ -304,7 +326,9 @@ Stream = (function() {
   };
 
   Stream.prototype.peekUInt16 = function(offset, littleEndian) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     this.peek(2, offset, littleEndian);
     return uint16[0];
   };
@@ -315,7 +339,9 @@ Stream = (function() {
   };
 
   Stream.prototype.peekInt16 = function(offset, littleEndian) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     this.peek(2, offset, littleEndian);
     return int16[0];
   };
@@ -329,7 +355,9 @@ Stream = (function() {
   };
 
   Stream.prototype.peekUInt24 = function(offset, littleEndian) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     if (littleEndian) {
       return this.peekUInt16(offset, true) + (this.peekUInt8(offset + 2) << 16);
     } else {
@@ -346,7 +374,9 @@ Stream = (function() {
   };
 
   Stream.prototype.peekInt24 = function(offset, littleEndian) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     if (littleEndian) {
       return this.peekUInt16(offset, true) + (this.peekInt8(offset + 2) << 16);
     } else {
@@ -360,7 +390,9 @@ Stream = (function() {
   };
 
   Stream.prototype.peekUInt32 = function(offset, littleEndian) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     this.peek(4, offset, littleEndian);
     return uint32[0];
   };
@@ -371,7 +403,9 @@ Stream = (function() {
   };
 
   Stream.prototype.peekInt32 = function(offset, littleEndian) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     this.peek(4, offset, littleEndian);
     return int32[0];
   };
@@ -382,7 +416,9 @@ Stream = (function() {
   };
 
   Stream.prototype.peekFloat32 = function(offset, littleEndian) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     this.peek(4, offset, littleEndian);
     return float32[0];
   };
@@ -399,12 +435,16 @@ Stream = (function() {
   float64Fallback = function() {
     var exp, frac, high, low, out, sign;
     low = uint32[0], high = uint32[1];
-    if (!high || high === 0x80000000) return 0.0;
+    if (!high || high === 0x80000000) {
+      return 0.0;
+    }
     sign = 1 - (high >>> 31) * 2;
     exp = (high >>> 20) & 0x7ff;
     frac = high & 0xfffff;
     if (exp === 0x7ff) {
-      if (frac) return NaN;
+      if (frac) {
+        return NaN;
+      }
       return sign * Infinity;
     }
     exp -= 1023;
@@ -414,7 +454,9 @@ Stream = (function() {
   };
 
   Stream.prototype.peekFloat64 = function(offset, littleEndian) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     this.peek(8, offset, littleEndian);
     if (float64) {
       return float64[0];
@@ -435,9 +477,13 @@ Stream = (function() {
     a1 = uint8[8];
     sign = 1 - (a0 >>> 7) * 2;
     exp = ((a0 & 0x7F) << 8) | a1;
-    if (exp === 0 && low === 0 && high === 0) return 0;
+    if (exp === 0 && low === 0 && high === 0) {
+      return 0;
+    }
     if (exp === 0x7fff) {
-      if (low === 0 && high === 0) return sign * Infinity;
+      if (low === 0 && high === 0) {
+        return sign * Infinity;
+      }
       return NaN;
     }
     exp -= 16383;
@@ -447,24 +493,26 @@ Stream = (function() {
   };
 
   Stream.prototype.peekFloat80 = function(offset, littleEndian) {
-    if (offset == null) offset = 0;
+    if (offset == null) {
+      offset = 0;
+    }
     this.peek(10, offset, littleEndian);
     return float80();
   };
 
   Stream.prototype.readString = function(length) {
-    var i, result;
+    var i, result, _i;
     result = [];
-    for (i = 0; i < length; i += 1) {
+    for (i = _i = 0; _i < length; i = _i += 1) {
       result.push(String.fromCharCode(this.readUInt8()));
     }
     return result.join('');
   };
 
   Stream.prototype.peekString = function(offset, length) {
-    var i, result;
+    var i, result, _i;
     result = [];
-    for (i = 0; i < length; i += 1) {
+    for (i = _i = 0; _i < length; i = _i += 1) {
       result.push(String.fromCharCode(this.peekUInt8(offset + i)));
     }
     return result.join('');
@@ -479,21 +527,23 @@ Stream = (function() {
   };
 
   Stream.prototype.readBuffer = function(length) {
-    var i, result, to;
+    var i, result, to, _i;
     result = Buffer.allocate(length);
     to = result.data;
-    for (i = 0; i < length; i += 1) {
+    for (i = _i = 0; _i < length; i = _i += 1) {
       to[i] = this.readUInt8();
     }
     return result;
   };
 
   Stream.prototype.peekBuffer = function(offset, length) {
-    var i, result, to;
-    if (offset == null) offset = 0;
+    var i, result, to, _i;
+    if (offset == null) {
+      offset = 0;
+    }
     result = Buffer.allocate(length);
     to = result.data;
-    for (i = 0; i < length; i += 1) {
+    for (i = _i = 0; _i < length; i = _i += 1) {
       to[i] = this.peekUInt8(offset + i);
     }
     return result;
@@ -516,9 +566,12 @@ Stream = (function() {
 
 })();
 
+
+
 var Bitstream;
 
 Bitstream = (function() {
+  var bitMask;
 
   function Bitstream(stream) {
     this.stream = stream;
@@ -557,7 +610,9 @@ Bitstream = (function() {
 
   Bitstream.prototype.readBig = function(bits) {
     var val;
-    if (bits === 0) return 0;
+    if (bits === 0) {
+      return 0;
+    }
     val = this.peekBig(bits);
     this.advance(bits);
     return val;
@@ -565,7 +620,9 @@ Bitstream = (function() {
 
   Bitstream.prototype.peekBig = function(bits) {
     var a, a0, a1, a2, a3, a4;
-    if (bits === 0) return 0;
+    if (bits === 0) {
+      return 0;
+    }
     a0 = this.stream.peekUInt8(0) * 0x0100000000;
     a1 = this.stream.peekUInt8(1) * 0x0001000000;
     a2 = this.stream.peekUInt8(2) * 0x0000010000;
@@ -579,7 +636,9 @@ Bitstream = (function() {
 
   Bitstream.prototype.read = function(bits) {
     var a;
-    if (bits === 0) return 0;
+    if (bits === 0) {
+      return 0;
+    }
     a = this.stream.peekUInt32(0);
     a = (a << this.bitPosition) >>> (32 - bits);
     this.advance(bits);
@@ -588,7 +647,9 @@ Bitstream = (function() {
 
   Bitstream.prototype.readSigned = function(bits) {
     var a;
-    if (bits === 0) return 0;
+    if (bits === 0) {
+      return 0;
+    }
     a = this.stream.peekUInt32(0);
     a = (a << this.bitPosition) >> (32 - bits);
     this.advance(bits);
@@ -597,7 +658,9 @@ Bitstream = (function() {
 
   Bitstream.prototype.peek = function(bits) {
     var a;
-    if (bits === 0) return 0;
+    if (bits === 0) {
+      return 0;
+    }
     a = this.stream.peekUInt32(0);
     a = (a << this.bitPosition) >>> (32 - bits);
     return a;
@@ -605,7 +668,9 @@ Bitstream = (function() {
 
   Bitstream.prototype.readSmall = function(bits) {
     var a;
-    if (bits === 0) return 0;
+    if (bits === 0) {
+      return 0;
+    }
     a = this.stream.peekUInt16(0);
     a = ((a << this.bitPosition) & 0xFFFF) >>> (16 - bits);
     this.advance(bits);
@@ -614,7 +679,9 @@ Bitstream = (function() {
 
   Bitstream.prototype.peekSmall = function(bits) {
     var a;
-    if (bits === 0) return 0;
+    if (bits === 0) {
+      return 0;
+    }
     a = this.stream.peekUInt16(0);
     a = ((a << this.bitPosition) & 0xFFFF) >>> (16 - bits);
     return a;
@@ -635,38 +702,75 @@ Bitstream = (function() {
     return a;
   };
 
+  bitMask = [0x00000000, 0x00000001, 0x00000003, 0x00000007, 0x0000000f, 0x0000001f, 0x0000003f, 0x0000007f, 0x000000ff, 0x000001ff, 0x000003ff, 0x000007ff, 0x00000fff, 0x00001fff, 0x00003fff, 0x00007fff, 0x0000ffff, 0x0001ffff, 0x0003ffff, 0x0007ffff, 0x000fffff, 0x001fffff, 0x003fffff, 0x007fffff, 0x00ffffff, 0x01ffffff, 0x03ffffff, 0x07ffffff, 0x0fffffff, 0x1fffffff, 0x3fffffff, 0x7fffffff, 0xffffffff];
+
+  Bitstream.prototype.readLSB = function(bits) {
+    var a, modBits;
+    if (bits === 0) {
+      return 0;
+    }
+    modBits = bits + this.bitPosition;
+    a = (this.stream.peekUInt8(0) & 0xFF) >>> this.bitPosition;
+    if (modBits > 8) {
+      a |= (this.stream.peekUInt8(1) & 0xFF) << (8 - this.bitPosition);
+    }
+    if (modBits > 16) {
+      a |= (this.stream.peekUInt8(2) & 0xFF) << (16 - this.bitPosition);
+    }
+    if (modBits > 24) {
+      a |= (this.stream.peekUInt8(3) & 0xFF) << (24 - this.bitPosition);
+    }
+    if (modBits > 32) {
+      a |= (this.stream.peekUInt8(4) & 0xFF) << (32 - this.bitPosition);
+    }
+    this.advance(bits);
+    return a & bitMask[bits];
+  };
+
   return Bitstream;
 
 })();
 
-var EventEmitter;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; }, __slice = Array.prototype.slice;
 
-EventEmitter = (function() {
 
-  __extends(EventEmitter, Base);
+var EventEmitter,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+  __slice = [].slice;
+
+EventEmitter = (function(_super) {
+
+  __extends(EventEmitter, _super);
 
   function EventEmitter() {
-    EventEmitter.__super__.constructor.apply(this, arguments);
+    return EventEmitter.__super__.constructor.apply(this, arguments);
   }
 
   EventEmitter.prototype.on = function(event, fn) {
-    var _base, _ref, _ref2;
-    if ((_ref = this.events) == null) this.events = {};
-    if ((_ref2 = (_base = this.events)[event]) == null) _base[event] = [];
+    var _base, _ref, _ref1;
+    if ((_ref = this.events) == null) {
+      this.events = {};
+    }
+    if ((_ref1 = (_base = this.events)[event]) == null) {
+      _base[event] = [];
+    }
     return this.events[event].push(fn);
   };
 
   EventEmitter.prototype.off = function(event, fn) {
     var index, _ref;
-    if (!((_ref = this.events) != null ? _ref[event] : void 0)) return;
+    if (!((_ref = this.events) != null ? _ref[event] : void 0)) {
+      return;
+    }
     index = this.events[event].indexOf(fn);
-    if (~index) return this.events[event].splice(index, 1);
+    if (~index) {
+      return this.events[event].splice(index, 1);
+    }
   };
 
   EventEmitter.prototype.once = function(event, fn) {
-    var cb;
-    var _this = this;
+    var cb,
+      _this = this;
     return this.on(event, cb = function() {
       _this.off(event, cb);
       return fn.apply(_this, arguments);
@@ -674,40 +778,46 @@ EventEmitter = (function() {
   };
 
   EventEmitter.prototype.emit = function() {
-    var args, event, fn, _i, _len, _ref, _ref2;
+    var args, event, fn, _i, _len, _ref, _ref1;
     event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    if (!((_ref = this.events) != null ? _ref[event] : void 0)) return;
-    _ref2 = this.events[event];
-    for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-      fn = _ref2[_i];
+    if (!((_ref = this.events) != null ? _ref[event] : void 0)) {
+      return;
+    }
+    _ref1 = this.events[event];
+    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+      fn = _ref1[_i];
       fn.apply(this, args);
     }
   };
 
   return EventEmitter;
 
-})();
+})(Base);
 
-var Demuxer;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-Demuxer = (function() {
+
+var Demuxer,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+Demuxer = (function(_super) {
   var formats;
 
-  __extends(Demuxer, EventEmitter);
+  __extends(Demuxer, _super);
 
   Demuxer.probe = function(buffer) {
     return false;
   };
 
   function Demuxer(source, chunk) {
-    var list, received;
-    var _this = this;
+    var list, received,
+      _this = this;
     list = new BufferList;
     list.push(chunk);
     this.stream = new Stream(list);
     received = false;
     source.on('data', function(chunk) {
+      console.log('test');
       received = true;
       list.push(chunk);
       return _this.readChunk(chunk);
@@ -716,7 +826,9 @@ Demuxer = (function() {
       return _this.emit('error', err);
     });
     source.on('end', function() {
-      if (!received) _this.readChunk(chunk);
+      if (!received) {
+        _this.readChunk(chunk);
+      }
       return _this.emit('end');
     });
     this.init();
@@ -741,26 +853,31 @@ Demuxer = (function() {
     stream = Stream.fromBuffer(buffer);
     for (_i = 0, _len = formats.length; _i < _len; _i++) {
       format = formats[_i];
-      if (format.probe(stream)) return format;
+      if (format.probe(stream)) {
+        return format;
+      }
     }
     return null;
   };
 
   return Demuxer;
 
-})();
+})(EventEmitter);
 
-var Decoder;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-Decoder = (function() {
+
+var Decoder,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+Decoder = (function(_super) {
   var codecs;
 
-  __extends(Decoder, EventEmitter);
+  __extends(Decoder, _super);
 
   function Decoder(demuxer, format) {
-    var list;
-    var _this = this;
+    var list,
+      _this = this;
     this.format = format;
     list = new BufferList;
     this.stream = new Stream(list);
@@ -772,7 +889,9 @@ Decoder = (function() {
     demuxer.on('data', function(chunk, final) {
       _this.receivedFinalBuffer = !!final;
       list.push(chunk);
-      return _this.emit('available');
+      return setTimeout(function() {
+        return _this.emit('available');
+      }, 0);
     });
     this.init();
   }
@@ -799,18 +918,23 @@ Decoder = (function() {
 
   return Decoder;
 
-})();
+})(EventEmitter);
 
-var Queue;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-Queue = (function() {
 
-  __extends(Queue, EventEmitter);
+var Queue,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+Queue = (function(_super) {
+
+  __extends(Queue, _super);
 
   function Queue(decoder) {
     this.decoder = decoder;
     this.write = __bind(this.write, this);
+
     this.readyMark = 64;
     this.finished = false;
     this.buffering = true;
@@ -820,7 +944,9 @@ Queue = (function() {
   }
 
   Queue.prototype.write = function(buffer) {
-    if (buffer) this.buffers.push(buffer);
+    if (buffer) {
+      this.buffers.push(buffer);
+    }
     if (this.buffering) {
       if (this.buffers.length >= this.readyMark || this.decoder.receivedFinalBuffer) {
         this.buffering = false;
@@ -832,36 +958,45 @@ Queue = (function() {
   };
 
   Queue.prototype.read = function() {
-    if (this.buffers.length === 0) return null;
+    if (this.buffers.length === 0) {
+      return null;
+    }
     this.decoder.readChunk();
     return this.buffers.shift();
   };
 
   return Queue;
 
-})();
+})(EventEmitter);
 
-var AudioDevice;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-AudioDevice = (function() {
+
+var AudioDevice,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+AudioDevice = (function(_super) {
   var devices;
 
-  __extends(AudioDevice, EventEmitter);
+  __extends(AudioDevice, _super);
 
   function AudioDevice(sampleRate, channels) {
     this.sampleRate = sampleRate;
     this.channels = channels;
     this.updateTime = __bind(this.updateTime, this);
+
     this.playing = false;
     this.currentTime = 0;
     this._lastTime = 0;
   }
 
   AudioDevice.prototype.start = function() {
-    var _ref;
-    var _this = this;
-    if (this.playing) return;
+    var _ref,
+      _this = this;
+    if (this.playing) {
+      return;
+    }
     this.playing = true;
     if ((_ref = this.device) == null) {
       this.device = AudioDevice.create(this.sampleRate, this.channels);
@@ -874,7 +1009,9 @@ AudioDevice = (function() {
   };
 
   AudioDevice.prototype.stop = function() {
-    if (!this.playing) return;
+    if (!this.playing) {
+      return;
+    }
     this.playing = false;
     this.device.off('refill', this.refill);
     return clearInterval(this._timer);
@@ -909,21 +1046,27 @@ AudioDevice = (function() {
     var device, _i, _len;
     for (_i = 0, _len = devices.length; _i < _len; _i++) {
       device = devices[_i];
-      if (device.supported) return new device(sampleRate, channels);
+      if (device.supported) {
+        return new device(sampleRate, channels);
+      }
     }
     return null;
   };
 
   return AudioDevice;
 
-})();
+})(EventEmitter);
 
-var Asset;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-Asset = (function() {
 
-  __extends(Asset, EventEmitter);
+var Asset,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+Asset = (function(_super) {
+
+  __extends(Asset, _super);
 
   window.Asset = Asset;
 
@@ -931,7 +1074,9 @@ Asset = (function() {
     var _this = this;
     this.source = source;
     this.findDecoder = __bind(this.findDecoder, this);
+
     this.probe = __bind(this.probe, this);
+
     this.buffered = 0;
     this.duration = null;
     this.format = null;
@@ -963,20 +1108,26 @@ Asset = (function() {
   };
 
   Asset.prototype.start = function() {
-    if (this.active) return;
+    if (this.active) {
+      return;
+    }
     this.active = true;
     return this.source.start();
   };
 
   Asset.prototype.stop = function() {
-    if (!this.active) return;
+    if (!this.active) {
+      return;
+    }
     this.active = false;
     return this.source.pause();
   };
 
   Asset.prototype.get = function(event, callback) {
     var _this = this;
-    if (event !== 'format' && event !== 'duration' && event !== 'metadata') return;
+    if (event !== 'format' && event !== 'duration' && event !== 'metadata') {
+      return;
+    }
     if (this[event] != null) {
       return callback(this[event]);
     } else {
@@ -989,9 +1140,11 @@ Asset = (function() {
   };
 
   Asset.prototype.probe = function(chunk) {
-    var demuxer;
-    var _this = this;
-    if (!this.active) return;
+    var demuxer,
+      _this = this;
+    if (!this.active) {
+      return;
+    }
     demuxer = Demuxer.find(chunk);
     if (!demuxer) {
       return this.emit('error', 'A demuxer for this container was not found.');
@@ -1013,10 +1166,12 @@ Asset = (function() {
   };
 
   Asset.prototype.findDecoder = function(format) {
-    var decoder;
-    var _this = this;
+    var decoder,
+      _this = this;
     this.format = format;
-    if (!this.active) return;
+    if (!this.active) {
+      return;
+    }
     this.emit('format', this.format);
     console.log(this.format);
     decoder = Decoder.find(this.format.formatID);
@@ -1036,14 +1191,18 @@ Asset = (function() {
 
   return Asset;
 
-})();
+})(EventEmitter);
 
-var Player;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-Player = (function() {
 
-  __extends(Player, EventEmitter);
+var Player,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+Player = (function(_super) {
+
+  __extends(Player, _super);
 
   window.Player = Player;
 
@@ -1051,6 +1210,7 @@ Player = (function() {
     var _this = this;
     this.asset = asset;
     this.startPlaying = __bind(this.startPlaying, this);
+
     this.playing = false;
     this.buffered = 0;
     this.currentTime = 0;
@@ -1097,23 +1257,32 @@ Player = (function() {
   };
 
   Player.prototype.preload = function() {
-    if (!this.asset) return;
+    if (!this.asset) {
+      return;
+    }
     this.startedPreloading = true;
     return this.asset.start();
   };
 
   Player.prototype.play = function() {
     var _ref;
-    if (this.playing) return;
-    if (!this.startedPreloading) this.preload();
+    if (this.playing) {
+      return;
+    }
+    if (!this.startedPreloading) {
+      this.preload();
+    }
     this.playing = true;
     return (_ref = this.device) != null ? _ref.start() : void 0;
   };
 
   Player.prototype.pause = function() {
-    if (!this.playing) return;
+    var _ref;
+    if (!this.playing) {
+      return;
+    }
     this.playing = false;
-    return this.device.stop();
+    return (_ref = this.device) != null ? _ref.stop() : void 0;
   };
 
   Player.prototype.togglePlayback = function() {
@@ -1132,8 +1301,8 @@ Player = (function() {
   };
 
   Player.prototype.startPlaying = function() {
-    var decoder, div, format, frame, frameOffset, _ref;
-    var _this = this;
+    var decoder, div, format, frame, frameOffset, _ref,
+      _this = this;
     frame = this.queue.read();
     frameOffset = 0;
     _ref = this.asset, format = _ref.format, decoder = _ref.decoder;
@@ -1144,12 +1313,14 @@ Player = (function() {
       return _this.emit('progress', _this.currentTime);
     });
     this.refill = function(buffer) {
-      var bufferOffset, filter, i, max, _i, _len, _ref2;
-      if (!_this.playing) return;
+      var bufferOffset, filter, i, max, _i, _j, _len, _ref1;
+      if (!_this.playing) {
+        return;
+      }
       bufferOffset = 0;
       while (frame && bufferOffset < buffer.length) {
         max = Math.min(frame.length - frameOffset, buffer.length - bufferOffset);
-        for (i = 0; i < max; i += 1) {
+        for (i = _i = 0; _i < max; i = _i += 1) {
           buffer[bufferOffset++] = frame[frameOffset++] / div;
         }
         if (frameOffset === frame.length) {
@@ -1157,15 +1328,16 @@ Player = (function() {
           frameOffset = 0;
         }
       }
-      _ref2 = _this.filters;
-      for (_i = 0, _len = _ref2.length; _i < _len; _i++) {
-        filter = _ref2[_i];
+      _ref1 = _this.filters;
+      for (_j = 0, _len = _ref1.length; _j < _len; _j++) {
+        filter = _ref1[_j];
         filter.process(buffer);
       }
       if (!frame) {
         if (decoder.receivedFinalBuffer) {
           _this.currentTime = _this.duration;
           _this.emit('progress', _this.currentTime);
+          _this.emit('end');
           _this.pause();
         } else {
           _this.device.stop();
@@ -1173,21 +1345,27 @@ Player = (function() {
       }
     };
     this.device.on('refill', this.refill);
-    if (this.playing) this.device.start();
+    if (this.playing) {
+      this.device.start();
+    }
     return this.emit('ready');
   };
 
   return Player;
 
-})();
+})(EventEmitter);
 
-var WebKitAudioDevice;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-WebKitAudioDevice = (function() {
+
+var WebKitAudioDevice,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+WebKitAudioDevice = (function(_super) {
   var AudioContext, sharedContext;
 
-  __extends(WebKitAudioDevice, EventEmitter);
+  __extends(WebKitAudioDevice, _super);
 
   AudioDevice.register(WebKitAudioDevice);
 
@@ -1201,6 +1379,7 @@ WebKitAudioDevice = (function() {
     this.sampleRate = sampleRate;
     this.channels = channels;
     this.refill = __bind(this.refill, this);
+
     this.context = sharedContext != null ? sharedContext : sharedContext = new AudioContext;
     this.deviceChannels = this.context.destination.numberOfChannels;
     this.deviceSampleRate = this.context.sampleRate;
@@ -1210,17 +1389,17 @@ WebKitAudioDevice = (function() {
   }
 
   WebKitAudioDevice.prototype.refill = function(event) {
-    var channelCount, channels, data, i, n, outputBuffer, _ref;
+    var channelCount, channels, data, i, n, outputBuffer, _i, _j, _k, _ref;
     outputBuffer = event.outputBuffer;
     channelCount = outputBuffer.numberOfChannels;
     channels = new Array(channelCount);
-    for (i = 0; i < channelCount; i += 1) {
+    for (i = _i = 0; _i < channelCount; i = _i += 1) {
       channels[i] = outputBuffer.getChannelData(i);
     }
     data = new Float32Array(outputBuffer.length * channelCount);
     this.emit('refill', data);
-    for (i = 0, _ref = outputBuffer.length; i < _ref; i += 1) {
-      for (n = 0; n < channelCount; n += 1) {
+    for (i = _j = 0, _ref = outputBuffer.length; _j < _ref; i = _j += 1) {
+      for (n = _k = 0; _k < channelCount; n = _k += 1) {
         channels[n][i] = data[i * channelCount + n];
       }
     }
@@ -1236,15 +1415,19 @@ WebKitAudioDevice = (function() {
 
   return WebKitAudioDevice;
 
-})();
+})(EventEmitter);
 
-var MozillaAudioDevice;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-MozillaAudioDevice = (function() {
+
+var MozillaAudioDevice,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+MozillaAudioDevice = (function(_super) {
   var createTimer, destroyTimer;
 
-  __extends(MozillaAudioDevice, EventEmitter);
+  __extends(MozillaAudioDevice, _super);
 
   AudioDevice.register(MozillaAudioDevice);
 
@@ -1254,6 +1437,7 @@ MozillaAudioDevice = (function() {
     this.sampleRate = sampleRate;
     this.channels = channels;
     this.refill = __bind(this.refill, this);
+
     this.audio = new Audio;
     this.audio.mozSetup(this.channels, this.sampleRate);
     this.writePosition = 0;
@@ -1279,7 +1463,9 @@ MozillaAudioDevice = (function() {
       buffer = new Float32Array(available);
       this.emit('refill', buffer);
       written = this.audio.mozWriteAudio(buffer);
-      if (written < buffer.length) this.tail = buffer.subarray(written);
+      if (written < buffer.length) {
+        this.tail = buffer.subarray(written);
+      }
       this.writePosition += written;
     }
   };
@@ -1293,12 +1479,11 @@ MozillaAudioDevice = (function() {
   };
 
   createTimer = function(fn, interval) {
-    var BlobBuilder, bb, url, worker;
-    BlobBuilder = window.BlobBuilder || window.MozBlobBuilder;
-    if (!(BlobBuilder && URL && Worker)) return setInterval(fn, interval);
-    bb = new BlobBuilder;
-    bb.append("setInterval(function() { postMessage('ping'); }, " + interval + ");");
-    url = URL.createObjectURL(bb.getBlob());
+    var url, worker;
+    url = Buffer.makeBlobURL("setInterval(function() { postMessage('ping'); }, " + interval + ");");
+    if (url == null) {
+      return setInterval(fn, interval);
+    }
     worker = new Worker(url);
     worker.onmessage = fn;
     worker.url = url;
@@ -1316,14 +1501,17 @@ MozillaAudioDevice = (function() {
 
   return MozillaAudioDevice;
 
-})();
+})(EventEmitter);
 
-var HTTPSource;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-HTTPSource = (function() {
 
-  __extends(HTTPSource, EventEmitter);
+var HTTPSource,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+HTTPSource = (function(_super) {
+
+  __extends(HTTPSource, _super);
 
   function HTTPSource(url) {
     this.url = url;
@@ -1354,8 +1542,8 @@ HTTPSource = (function() {
   };
 
   HTTPSource.prototype.loop = function() {
-    var endPos;
-    var _this = this;
+    var endPos,
+      _this = this;
     if (this.inflight || !this.length) {
       return this.emit('error', 'Something is wrong in HTTPSource.loop');
     }
@@ -1370,20 +1558,22 @@ HTTPSource = (function() {
       return _this.emit('progress', (_this.offset + event.loaded) / _this.length * 100);
     };
     this.xhr.onload = function(event) {
-      var buf, buffer, i, txt, _ref;
+      var buf, buffer, i, txt, _i, _ref;
       if (_this.xhr.response) {
         buf = new Uint8Array(_this.xhr.response);
       } else {
         txt = _this.xhr.responseText;
         buf = new Uint8Array(txt.length);
-        for (i = 0, _ref = txt.length; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
+        for (i = _i = 0, _ref = txt.length; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
           buf[i] = txt.charCodeAt(i) & 0xff;
         }
       }
       buffer = new Buffer(buf);
       _this.offset += buffer.length;
       _this.emit('data', buffer);
-      if (_this.offset === _this.length) _this.emit('end');
+      if (_this.offset === _this.length) {
+        _this.emit('end');
+      }
       _this.emit('progress', _this.offset / _this.length * 100);
       _this.inflight = false;
       return _this.loop();
@@ -1416,14 +1606,17 @@ HTTPSource = (function() {
 
   return HTTPSource;
 
-})();
+})(EventEmitter);
 
-var FileSource;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-FileSource = (function() {
 
-  __extends(FileSource, EventEmitter);
+var FileSource,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+FileSource = (function(_super) {
+
+  __extends(FileSource, _super);
 
   function FileSource(file) {
     this.file = file;
@@ -1444,7 +1637,9 @@ FileSource = (function() {
       _this.offset += buf.length;
       _this.emit('data', buf);
       _this.emit('progress', _this.offset / _this.length * 100);
-      if (_this.offset < _this.length) return _this.loop();
+      if (_this.offset < _this.length) {
+        return _this.loop();
+      }
     };
     this.reader.onloadend = function() {
       if (_this.offset === _this.length) {
@@ -1481,7 +1676,9 @@ FileSource = (function() {
 
   return FileSource;
 
-})();
+})(EventEmitter);
+
+
 
 var Filter;
 
@@ -1503,46 +1700,56 @@ Filter = (function() {
 
 })();
 
-var VolumeFilter;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-VolumeFilter = (function() {
 
-  __extends(VolumeFilter, Filter);
+var VolumeFilter,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+VolumeFilter = (function(_super) {
+
+  __extends(VolumeFilter, _super);
 
   function VolumeFilter() {
-    VolumeFilter.__super__.constructor.apply(this, arguments);
+    return VolumeFilter.__super__.constructor.apply(this, arguments);
   }
 
   VolumeFilter.prototype.process = function(buffer) {
-    var i, vol, _ref;
-    if (this.value >= 100) return;
+    var i, vol, _i, _ref;
+    if (this.value >= 100) {
+      return;
+    }
     vol = Math.max(0, Math.min(100, this.value)) / 100;
-    for (i = 0, _ref = buffer.length; i < _ref; i += 1) {
+    for (i = _i = 0, _ref = buffer.length; _i < _ref; i = _i += 1) {
       buffer[i] *= vol;
     }
   };
 
   return VolumeFilter;
 
-})();
+})(Filter);
 
-var BalanceFilter;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-BalanceFilter = (function() {
 
-  __extends(BalanceFilter, Filter);
+var BalanceFilter,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+BalanceFilter = (function(_super) {
+
+  __extends(BalanceFilter, _super);
 
   function BalanceFilter() {
-    BalanceFilter.__super__.constructor.apply(this, arguments);
+    return BalanceFilter.__super__.constructor.apply(this, arguments);
   }
 
   BalanceFilter.prototype.process = function(buffer) {
-    var i, pan, _ref;
-    if (this.value === 0) return;
+    var i, pan, _i, _ref;
+    if (this.value === 0) {
+      return;
+    }
     pan = Math.max(-50, Math.min(50, this.value));
-    for (i = 0, _ref = buffer.length; i < _ref; i += 2) {
+    for (i = _i = 0, _ref = buffer.length; _i < _ref; i = _i += 2) {
       buffer[i] *= Math.min(1, (50 - pan) / 50);
       buffer[i + 1] *= Math.min(1, (50 + pan) / 50);
     }
@@ -1550,15 +1757,18 @@ BalanceFilter = (function() {
 
   return BalanceFilter;
 
-})();
+})(Filter);
 
-var EarwaxFilter;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-EarwaxFilter = (function() {
+
+var EarwaxFilter,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+EarwaxFilter = (function(_super) {
   var NUMTAPS, filt;
 
-  __extends(EarwaxFilter, Filter);
+  __extends(EarwaxFilter, _super);
 
   filt = new Int8Array([4, -6, 4, -11, -1, -5, 3, 3, -2, 5, -5, 0, 9, 1, 6, 3, -4, -1, -5, -3, -2, -5, -7, 1, 6, -7, 30, -29, 12, -3, -11, 4, -3, 7, -20, 23, 2, 0, 1, -6, -14, -5, 15, -18, 6, 7, 15, -10, -14, 22, -7, -2, -4, 9, 6, -12, 6, -6, 0, -11, 0, -5, 4, 0]);
 
@@ -1569,12 +1779,12 @@ EarwaxFilter = (function() {
   }
 
   EarwaxFilter.prototype.process = function(buffer) {
-    var i, len, output, _ref;
+    var i, len, output, _i, _ref;
     len = buffer.length;
     i = 0;
     while (len--) {
       output = 0;
-      for (i = _ref = NUMTAPS - 1; i > 0; i += -1) {
+      for (i = _i = _ref = NUMTAPS - 1; _i > 0; i = _i += -1) {
         this.taps[i] = this.taps[i - 1];
         output += this.taps[i] * filt[i];
       }
@@ -1586,17 +1796,20 @@ EarwaxFilter = (function() {
 
   return EarwaxFilter;
 
-})();
+})(Filter);
 
-var CAFDemuxer;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-CAFDemuxer = (function() {
 
-  __extends(CAFDemuxer, Demuxer);
+var CAFDemuxer,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+CAFDemuxer = (function(_super) {
+
+  __extends(CAFDemuxer, _super);
 
   function CAFDemuxer() {
-    CAFDemuxer.__super__.constructor.apply(this, arguments);
+    return CAFDemuxer.__super__.constructor.apply(this, arguments);
   }
 
   Demuxer.register(CAFDemuxer);
@@ -1606,7 +1819,7 @@ CAFDemuxer = (function() {
   };
 
   CAFDemuxer.prototype.readChunk = function() {
-    var buffer;
+    var buffer, char, entries, flags, i, key, metadata, value, _i;
     if (!this.format && this.stream.available(64)) {
       if (this.stream.readString(4) !== 'caff') {
         return this.emit('error', "Invalid CAF, does not begin with 'caff'");
@@ -1618,31 +1831,28 @@ CAFDemuxer = (function() {
       if (!(this.stream.readUInt32() === 0 && this.stream.readUInt32() === 32)) {
         return this.emit('error', "Invalid 'desc' size, should be 32");
       }
-      this.format = {
-        sampleRate: this.stream.readFloat64(),
-        formatID: this.stream.readString(4),
-        formatFlags: this.stream.readUInt32(),
-        bytesPerPacket: this.stream.readUInt32(),
-        framesPerPacket: this.stream.readUInt32(),
-        channelsPerFrame: this.stream.readUInt32(),
-        bitsPerChannel: this.stream.readUInt32()
-      };
+      this.format = {};
+      this.format.sampleRate = this.stream.readFloat64();
+      this.format.formatID = this.stream.readString(4);
+      flags = this.stream.readUInt32();
+      this.format.floatingPoint = Boolean(flags & 1);
+      this.format.littleEndian = Boolean(flags & 2);
+      this.format.bytesPerPacket = this.stream.readUInt32();
+      this.format.framesPerPacket = this.stream.readUInt32();
+      this.format.channelsPerFrame = this.stream.readUInt32();
+      this.format.bitsPerChannel = this.stream.readUInt32();
       this.emit('format', this.format);
     }
-    while ((this.headerCache && this.stream.available(1)) || this.stream.available(13)) {
+    while (this.stream.available(1)) {
       if (!this.headerCache) {
         this.headerCache = {
           type: this.stream.readString(4),
           oversize: this.stream.readUInt32() !== 0,
           size: this.stream.readUInt32()
         };
-        if (this.headerCache.type === 'data') {
-          this.stream.advance(4);
-          this.headerCache.size -= 4;
+        if (this.headerCache.oversize) {
+          return this.emit('error', "Holy Shit, an oversized file, not supported in JS");
         }
-      }
-      if (this.headerCache.oversize) {
-        return this.emit('error', "Holy Shit, an oversized file, not supported in JS");
       }
       switch (this.headerCache.type) {
         case 'kuki':
@@ -1670,15 +1880,44 @@ CAFDemuxer = (function() {
             this.primingFrames = this.stream.readUInt32();
             this.remainderFrames = this.stream.readUInt32();
             this.emit('duration', this.numFrames / this.format.sampleRate * 1000 | 0);
+            this.sentDuration = true;
             this.stream.advance(this.headerCache.size - 24);
             this.headerCache = null;
           }
           break;
+        case 'info':
+          entries = this.stream.readUInt32();
+          metadata = {};
+          for (i = _i = 0; 0 <= entries ? _i < entries : _i > entries; i = 0 <= entries ? ++_i : --_i) {
+            key = '';
+            while ((char = this.stream.readUInt8()) !== 0) {
+              key += String.fromCharCode(char);
+            }
+            value = '';
+            while ((char = this.stream.readUInt8()) !== 0) {
+              value += String.fromCharCode(char);
+            }
+            metadata[key] = value;
+          }
+          this.emit('metadata', metadata);
+          this.headerCache = null;
+          break;
         case 'data':
+          if (!this.sentFirstDataChunk) {
+            this.stream.advance(4);
+            this.headerCache.size -= 4;
+            if (this.format.bytesPerPacket !== 0 && !this.sentDuration) {
+              this.numFrames = this.headerCache.size / this.format.bytesPerPacket;
+              this.emit('duration', this.numFrames / this.format.sampleRate * 1000 | 0);
+            }
+            this.sentFirstDataChunk = true;
+          }
           buffer = this.stream.readSingleBuffer(this.headerCache.size);
           this.headerCache.size -= buffer.length;
           this.emit('data', buffer, this.headerCache.size === 0);
-          if (this.headerCache.size <= 0) this.headerCache = null;
+          if (this.headerCache.size <= 0) {
+            this.headerCache = null;
+          }
           break;
         default:
           if (this.stream.available(this.headerCache.size)) {
@@ -1691,18 +1930,21 @@ CAFDemuxer = (function() {
 
   return CAFDemuxer;
 
-})();
+})(Demuxer);
 
-var M4ADemuxer;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-M4ADemuxer = (function() {
+
+var M4ADemuxer,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+M4ADemuxer = (function(_super) {
   var genres, metafields, readDescr;
 
-  __extends(M4ADemuxer, Demuxer);
+  __extends(M4ADemuxer, _super);
 
   function M4ADemuxer() {
-    M4ADemuxer.__super__.constructor.apply(this, arguments);
+    return M4ADemuxer.__super__.constructor.apply(this, arguments);
   }
 
   Demuxer.register(M4ADemuxer);
@@ -1749,12 +1991,14 @@ M4ADemuxer = (function() {
   genres = ["Blues", "Classic Rock", "Country", "Dance", "Disco", "Funk", "Grunge", "Hip-Hop", "Jazz", "Metal", "New Age", "Oldies", "Other", "Pop", "R&B", "Rap", "Reggae", "Rock", "Techno", "Industrial", "Alternative", "Ska", "Death Metal", "Pranks", "Soundtrack", "Euro-Techno", "Ambient", "Trip-Hop", "Vocal", "Jazz+Funk", "Fusion", "Trance", "Classical", "Instrumental", "Acid", "House", "Game", "Sound Clip", "Gospel", "Noise", "AlternRock", "Bass", "Soul", "Punk", "Space", "Meditative", "Instrumental Pop", "Instrumental Rock", "Ethnic", "Gothic", "Darkwave", "Techno-Industrial", "Electronic", "Pop-Folk", "Eurodance", "Dream", "Southern Rock", "Comedy", "Cult", "Gangsta", "Top 40", "Christian Rap", "Pop/Funk", "Jungle", "Native American", "Cabaret", "New Wave", "Psychadelic", "Rave", "Showtunes", "Trailer", "Lo-Fi", "Tribal", "Acid Punk", "Acid Jazz", "Polka", "Retro", "Musical", "Rock & Roll", "Hard Rock", "Folk", "Folk/Rock", "National Folk", "Swing", "Fast Fusion", "Bebob", "Latin", "Revival", "Celtic", "Bluegrass", "Avantgarde", "Gothic Rock", "Progressive Rock", "Psychedelic Rock", "Symphonic Rock", "Slow Rock", "Big Band", "Chorus", "Easy Listening", "Acoustic", "Humour", "Speech", "Chanson", "Opera", "Chamber Music", "Sonata", "Symphony", "Booty Bass", "Primus", "Porn Groove", "Satire", "Slow Jam", "Club", "Tango", "Samba", "Folklore", "Ballad", "Power Ballad", "Rhythmic Soul", "Freestyle", "Duet", "Punk Rock", "Drum Solo", "A Capella", "Euro-House", "Dance Hall"];
 
   M4ADemuxer.prototype.readChunk = function() {
-    var buffer, diff, duration, entryCount, field, i, numEntries, pos, rating, sampleRate, _ref;
+    var buffer, diff, duration, entryCount, field, i, numEntries, pos, rating, sampleRate, _i, _ref;
     while (this.stream.available(1)) {
       if (!this.readHeaders && this.stream.available(8)) {
         this.len = this.stream.readUInt32() - 8;
         this.type = this.stream.readString(4);
-        if (this.len === 0) continue;
+        if (this.len === 0) {
+          continue;
+        }
         this.readHeaders = true;
       }
       if (this.type in metafields) {
@@ -1764,7 +2008,9 @@ M4ADemuxer = (function() {
       }
       switch (this.type) {
         case 'ftyp':
-          if (!this.stream.available(this.len)) return;
+          if (!this.stream.available(this.len)) {
+            return;
+          }
           if (this.stream.readString(4) !== 'M4A ') {
             return this.emit('error', 'Not a valid M4A file.');
           }
@@ -1782,7 +2028,7 @@ M4ADemuxer = (function() {
           this.stream.advance(4);
           entryCount = this.stream.readUInt32();
           this.chunkOffsets = [];
-          for (i = 0; 0 <= entryCount ? i < entryCount : i > entryCount; 0 <= entryCount ? i++ : i--) {
+          for (i = _i = 0; 0 <= entryCount ? _i < entryCount : _i > entryCount; i = 0 <= entryCount ? ++_i : --_i) {
             this.chunkOffsets[i] = this.stream.readUInt32();
           }
           break;
@@ -1792,7 +2038,9 @@ M4ADemuxer = (function() {
           this.stream.advance(4);
           break;
         case 'data':
-          if (!this.stream.available(this.len)) return;
+          if (!this.stream.available(this.len)) {
+            return;
+          }
           field = metafields[this.metafield];
           switch (this.metafield) {
             case 'disk':
@@ -1830,7 +2078,9 @@ M4ADemuxer = (function() {
           }
           break;
         case 'mdhd':
-          if (!this.stream.available(this.len)) return;
+          if (!this.stream.available(this.len)) {
+            return;
+          }
           this.stream.advance(4);
           this.stream.advance(8);
           sampleRate = this.stream.readUInt32();
@@ -1839,7 +2089,9 @@ M4ADemuxer = (function() {
           this.stream.advance(4);
           break;
         case 'stsd':
-          if (!this.stream.available(this.len)) return;
+          if (!this.stream.available(this.len)) {
+            return;
+          }
           this.stream.advance(4);
           numEntries = this.stream.readUInt32();
           if (numEntries !== 1) {
@@ -1865,12 +2117,16 @@ M4ADemuxer = (function() {
           this.stream.advance(4);
           this.emit('cookie', this.stream.readBuffer(this.len - 4));
           this.sentCookie = true;
-          if (this.dataSections) this.sendDataSections();
+          if (this.dataSections) {
+            this.sendDataSections();
+          }
           break;
         case 'esds':
           this.readEsds();
           this.sentCookie = true;
-          if (this.dataSections) this.sendDataSections();
+          if (this.dataSections) {
+            this.sendDataSections();
+          }
           break;
         case 'mdat':
           if (this.chunkOffsets && this.stream.offset < this.chunkOffsets[0]) {
@@ -1884,27 +2140,35 @@ M4ADemuxer = (function() {
           if (this.sentCookie) {
             this.emit('data', buffer, this.len === 0);
           } else {
-            if ((_ref = this.dataSections) == null) this.dataSections = [];
+            if ((_ref = this.dataSections) == null) {
+              this.dataSections = [];
+            }
             this.dataSections.push(buffer);
           }
           break;
         default:
-          if (!this.stream.available(this.len)) return;
+          if (!this.stream.available(this.len)) {
+            return;
+          }
           this.stream.advance(this.len);
       }
       if (this.stream.offset === this.metaMaxPos) {
         this.emit('metadata', this.metadata);
       }
-      if (this.type !== 'mdat') this.readHeaders = false;
+      if (this.type !== 'mdat') {
+        this.readHeaders = false;
+      }
     }
   };
 
   M4ADemuxer.prototype.sendDataSections = function() {
-    var interval;
-    var _this = this;
+    var interval,
+      _this = this;
     return interval = setInterval(function() {
       _this.emit('data', _this.dataSections.shift(), _this.dataSections.length === 0);
-      if (_this.dataSections.length === 0) return clearInterval(interval);
+      if (_this.dataSections.length === 0) {
+        return clearInterval(interval);
+      }
     }, 100);
   };
 
@@ -1915,7 +2179,9 @@ M4ADemuxer = (function() {
     while (count--) {
       c = stream.readUInt8();
       len = (len << 7) | (c & 0x7f);
-      if (!(c & 0x80)) break;
+      if (!(c & 0x80)) {
+        break;
+      }
     }
     return len;
   };
@@ -1927,28 +2193,36 @@ M4ADemuxer = (function() {
   };
 
   M4ADemuxer.prototype.readEsds = function() {
-    var codec_id, extra, flags, len, startPos, tag, _ref, _ref2, _ref3;
+    var codec_id, extra, flags, len, startPos, tag, _ref, _ref1, _ref2;
     startPos = this.stream.offset;
     this.stream.advance(4);
     _ref = readDescr(this.stream), tag = _ref[0], len = _ref[1];
     if (tag === 0x03) {
       this.stream.advance(2);
       flags = this.stream.readUInt8();
-      if (flags & 0x80) this.stream.advance(2);
-      if (flags & 0x40) this.stream.advance(this.stream.readUInt8());
-      if (flags & 0x20) this.stream.advance(2);
+      if (flags & 0x80) {
+        this.stream.advance(2);
+      }
+      if (flags & 0x40) {
+        this.stream.advance(this.stream.readUInt8());
+      }
+      if (flags & 0x20) {
+        this.stream.advance(2);
+      }
     } else {
       this.stream.advance(2);
     }
-    _ref2 = readDescr(this.stream), tag = _ref2[0], len = _ref2[1];
+    _ref1 = readDescr(this.stream), tag = _ref1[0], len = _ref1[1];
     if (tag === 0x04) {
       codec_id = this.stream.readUInt8();
       this.stream.advance(1);
       this.stream.advance(3);
       this.stream.advance(4);
       this.stream.advance(4);
-      _ref3 = readDescr(this.stream), tag = _ref3[0], len = _ref3[1];
-      if (tag === 0x05) this.emit('cookie', this.stream.readBuffer(len));
+      _ref2 = readDescr(this.stream), tag = _ref2[0], len = _ref2[1];
+      if (tag === 0x05) {
+        this.emit('cookie', this.stream.readBuffer(len));
+      }
     }
     extra = this.len - this.stream.offset + startPos;
     return this.stream.advance(extra);
@@ -1956,17 +2230,20 @@ M4ADemuxer = (function() {
 
   return M4ADemuxer;
 
-})();
+})(Demuxer);
 
-var AIFFDemuxer;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-AIFFDemuxer = (function() {
 
-  __extends(AIFFDemuxer, Demuxer);
+var AIFFDemuxer,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+AIFFDemuxer = (function(_super) {
+
+  __extends(AIFFDemuxer, _super);
 
   function AIFFDemuxer() {
-    AIFFDemuxer.__super__.constructor.apply(this, arguments);
+    return AIFFDemuxer.__super__.constructor.apply(this, arguments);
   }
 
   Demuxer.register(AIFFDemuxer);
@@ -1996,10 +2273,11 @@ AIFFDemuxer = (function() {
       }
       switch (this.type) {
         case 'COMM':
-          if (!this.stream.available(this.len)) return;
+          if (!this.stream.available(this.len)) {
+            return;
+          }
           this.format = {
             formatID: 'lpcm',
-            formatFlags: 0,
             channelsPerFrame: this.stream.readUInt16(),
             sampleCount: this.stream.readUInt32(),
             bitsPerChannel: this.stream.readUInt16(),
@@ -2007,16 +2285,12 @@ AIFFDemuxer = (function() {
           };
           if (this.fileType === 'AIFC') {
             format = this.stream.readString(4);
-            if (format === 'sowt') {
-              this.format.formatFlags |= LPCMDecoder.LITTLE_ENDIAN;
-            }
-            if (format === 'fl32' || format === 'fl64') {
-              this.format.formatFlags |= LPCMDecoder.FLOATING_POINT;
-            }
             if (format === 'twos' || format === 'sowt' || format === 'fl32' || format === 'fl64' || format === 'NONE') {
               format = 'lpcm';
             }
             this.format.formatID = format;
+            this.format.littleEndian = format === 'sowt';
+            this.format.floatingPoint = format === 'fl32' || format === 'fl64';
             this.len -= 4;
           }
           this.stream.advance(this.len - 18);
@@ -2036,27 +2310,34 @@ AIFFDemuxer = (function() {
           this.emit('data', buffer, this.len === 0);
           break;
         default:
-          if (!this.stream.available(this.len)) return;
+          if (!this.stream.available(this.len)) {
+            return;
+          }
           this.stream.advance(this.len);
       }
-      if (this.type !== 'SSND') this.readHeaders = false;
+      if (this.type !== 'SSND') {
+        this.readHeaders = false;
+      }
     }
   };
 
   return AIFFDemuxer;
 
-})();
+})(Demuxer);
 
-var WAVEDemuxer;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-WAVEDemuxer = (function() {
+
+var WAVEDemuxer,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+WAVEDemuxer = (function(_super) {
   var formats;
 
-  __extends(WAVEDemuxer, Demuxer);
+  __extends(WAVEDemuxer, _super);
 
   function WAVEDemuxer() {
-    WAVEDemuxer.__super__.constructor.apply(this, arguments);
+    return WAVEDemuxer.__super__.constructor.apply(this, arguments);
   }
 
   Demuxer.register(WAVEDemuxer);
@@ -2073,7 +2354,7 @@ WAVEDemuxer = (function() {
   };
 
   WAVEDemuxer.prototype.readChunk = function() {
-    var buffer, bytes, encoding, flags;
+    var buffer, bytes, encoding;
     if (!this.readStart && this.stream.available(12)) {
       if (this.stream.readString(4) !== 'RIFF') {
         return this.emit('error', 'Invalid WAV file.');
@@ -2095,12 +2376,10 @@ WAVEDemuxer = (function() {
           if (!(encoding in formats)) {
             return this.emit('error', 'Unsupported format in WAV file.');
           }
-          flags = 0;
-          if (formats[encoding] === 'lpcm') flags |= LPCMDecoder.LITTLE_ENDIAN;
-          if (encoding === 0x0003) flags |= LPCMDecoder.FLOATING_POINT;
           this.format = {
             formatID: formats[encoding],
-            formatFlags: flags,
+            floatingPoint: encoding === 0x0003,
+            littleEndian: formats[encoding] === 'lpcm',
             channelsPerFrame: this.stream.readUInt16(true),
             sampleRate: this.stream.readUInt32(true)
           };
@@ -2121,27 +2400,34 @@ WAVEDemuxer = (function() {
           this.emit('data', buffer, this.len === 0);
           break;
         default:
-          if (!this.stream.available(this.len)) return;
+          if (!this.stream.available(this.len)) {
+            return;
+          }
           this.stream.advance(this.len);
       }
-      if (this.type !== 'data') this.readHeaders = false;
+      if (this.type !== 'data') {
+        this.readHeaders = false;
+      }
     }
   };
 
   return WAVEDemuxer;
 
-})();
+})(Demuxer);
 
-var AUDemuxer;
-var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-AUDemuxer = (function() {
-  var bps;
 
-  __extends(AUDemuxer, Demuxer);
+var AUDemuxer,
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+AUDemuxer = (function(_super) {
+  var bps, formats;
+
+  __extends(AUDemuxer, _super);
 
   function AUDemuxer() {
-    AUDemuxer.__super__.constructor.apply(this, arguments);
+    return AUDemuxer.__super__.constructor.apply(this, arguments);
   }
 
   Demuxer.register(AUDemuxer);
@@ -2154,6 +2440,11 @@ AUDemuxer = (function() {
 
   bps[26] = 8;
 
+  formats = {
+    1: 'ulaw',
+    27: 'alaw'
+  };
+
   AUDemuxer.prototype.readChunk = function() {
     var buf, bytes, dataSize, encoding, size, _results;
     if (!this.readHeader && this.stream.available(24)) {
@@ -2164,25 +2455,14 @@ AUDemuxer = (function() {
       dataSize = this.stream.readUInt32();
       encoding = this.stream.readUInt32();
       this.format = {
-        formatID: 'lpcm',
-        formatFlags: 0,
+        formatID: formats[encoding] || 'lpcm',
+        floatingPoint: encoding === 6 || encoding === 7,
         bitsPerChannel: bps[encoding - 1],
         sampleRate: this.stream.readUInt32(),
         channelsPerFrame: this.stream.readUInt32()
       };
       if (!(this.format.bitsPerChannel != null)) {
         return this.emit('error', 'Unsupported encoding in AU file.');
-      }
-      switch (encoding) {
-        case 1:
-          this.format.formatID = 'ulaw';
-          break;
-        case 6:
-        case 7:
-          this.format.formatFlags |= LPCMDecoder.FLOATING_POINT;
-          break;
-        case 27:
-          this.format.formatID = 'alaw';
       }
       if (dataSize !== 0xffffffff) {
         bytes = this.format.bitsPerChannel / 8;
@@ -2203,50 +2483,50 @@ AUDemuxer = (function() {
 
   return AUDemuxer;
 
-})();
+})(Demuxer);
 
-var LPCMDecoder;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-LPCMDecoder = (function() {
-  var FLOATING_POINT, LITTLE_ENDIAN;
 
-  __extends(LPCMDecoder, Decoder);
+var LPCMDecoder,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  Decoder.register('lpcm', LPCMDecoder);
+LPCMDecoder = (function(_super) {
 
-  LPCMDecoder.FLOATING_POINT = 1 << 0;
-
-  LPCMDecoder.LITTLE_ENDIAN = 1 << 1;
-
-  FLOATING_POINT = LPCMDecoder.FLOATING_POINT, LITTLE_ENDIAN = LPCMDecoder.LITTLE_ENDIAN;
+  __extends(LPCMDecoder, _super);
 
   function LPCMDecoder() {
     this.readChunk = __bind(this.readChunk, this);
-    var flags;
-    LPCMDecoder.__super__.constructor.apply(this, arguments);
-    flags = this.format.formatFlags || 0;
-    this.floatingPoint = Boolean(flags & FLOATING_POINT);
-    this.littleEndian = Boolean(flags & LITTLE_ENDIAN);
+    return LPCMDecoder.__super__.constructor.apply(this, arguments);
   }
 
+  Decoder.register('lpcm', LPCMDecoder);
+
+  LPCMDecoder.prototype.init = function() {
+    return this.floatingPoint = this.format.floatingPoint;
+  };
+
   LPCMDecoder.prototype.readChunk = function() {
-    var chunkSize, i, littleEndian, output, samples, stream;
-    stream = this.stream, littleEndian = this.littleEndian;
-    chunkSize = Math.min(4096, this.stream.remainingBytes());
+    var chunkSize, i, littleEndian, output, samples, stream, _i, _j, _k, _l, _m, _n;
+    stream = this.stream;
+    littleEndian = this.format.littleEndian;
+    chunkSize = Math.min(4096, stream.remainingBytes());
     samples = chunkSize / (this.format.bitsPerChannel / 8) >> 0;
-    if (chunkSize === 0) return this.once('available', this.readChunk);
-    if (this.floatingPoint) {
+    if (chunkSize === 0) {
+      return this.once('available', this.readChunk);
+    }
+    if (this.format.floatingPoint) {
       switch (this.format.bitsPerChannel) {
         case 32:
           output = new Float32Array(samples);
-          for (i = 0; i < samples; i += 1) {
+          for (i = _i = 0; _i < samples; i = _i += 1) {
             output[i] = stream.readFloat32(littleEndian);
           }
           break;
         case 64:
           output = new Float64Array(samples);
-          for (i = 0; i < samples; i += 1) {
+          for (i = _j = 0; _j < samples; i = _j += 1) {
             output[i] = stream.readFloat64(littleEndian);
           }
           break;
@@ -2257,25 +2537,25 @@ LPCMDecoder = (function() {
       switch (this.format.bitsPerChannel) {
         case 8:
           output = new Int8Array(samples);
-          for (i = 0; i < samples; i += 1) {
+          for (i = _k = 0; _k < samples; i = _k += 1) {
             output[i] = stream.readInt8();
           }
           break;
         case 16:
           output = new Int16Array(samples);
-          for (i = 0; i < samples; i += 1) {
+          for (i = _l = 0; _l < samples; i = _l += 1) {
             output[i] = stream.readInt16(littleEndian);
           }
           break;
         case 24:
           output = new Int32Array(samples);
-          for (i = 0; i < samples; i += 1) {
+          for (i = _m = 0; _m < samples; i = _m += 1) {
             output[i] = stream.readInt24(littleEndian);
           }
           break;
         case 32:
           output = new Int32Array(samples);
-          for (i = 0; i < samples; i += 1) {
+          for (i = _n = 0; _n < samples; i = _n += 1) {
             output[i] = stream.readInt32(littleEndian);
           }
           break;
@@ -2288,15 +2568,19 @@ LPCMDecoder = (function() {
 
   return LPCMDecoder;
 
-})();
+})(Decoder);
 
-var XLAWDecoder;
-var __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; }, __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-XLAWDecoder = (function() {
+
+var XLAWDecoder,
+  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  __hasProp = {}.hasOwnProperty,
+  __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
+
+XLAWDecoder = (function(_super) {
   var BIAS, QUANT_MASK, SEG_MASK, SEG_SHIFT, SIGN_BIT;
 
-  __extends(XLAWDecoder, Decoder);
+  __extends(XLAWDecoder, _super);
 
   Decoder.register('ulaw', XLAWDecoder);
 
@@ -2314,19 +2598,20 @@ XLAWDecoder = (function() {
 
   function XLAWDecoder() {
     this.readChunk = __bind(this.readChunk, this);
-    var i, seg, t, table, val;
+
+    var i, seg, t, table, val, _i, _j;
     XLAWDecoder.__super__.constructor.apply(this, arguments);
     this.format.bitsPerChannel = 16;
     this.table = table = new Float32Array(256);
     if (this.format.formatID === 'ulaw') {
-      for (i = 0; i < 256; i++) {
+      for (i = _i = 0; _i < 256; i = ++_i) {
         val = ~i;
         t = ((val & QUANT_MASK) << 3) + BIAS;
         t <<= (val & SEG_MASK) >>> SEG_SHIFT;
         table[i] = val & SIGN_BIT ? BIAS - t : t - BIAS;
       }
     } else {
-      for (i = 0; i < 256; i++) {
+      for (i = _j = 0; _j < 256; i = ++_j) {
         val = i ^ 0x55;
         t = val & QUANT_MASK;
         seg = (val & SEG_MASK) >>> SEG_SHIFT;
@@ -2342,13 +2627,15 @@ XLAWDecoder = (function() {
   }
 
   XLAWDecoder.prototype.readChunk = function() {
-    var chunkSize, i, output, samples, stream, table;
+    var chunkSize, i, output, samples, stream, table, _i;
     stream = this.stream, table = this.table;
     chunkSize = Math.min(4096, this.stream.remainingBytes());
     samples = chunkSize / (this.format.bitsPerChannel / 8) >> 0;
-    if (chunkSize === 0) return this.once('available', this.readChunk);
+    if (chunkSize === 0) {
+      return this.once('available', this.readChunk);
+    }
     output = new Int16Array(samples);
-    for (i = 0; i < samples; i += 1) {
+    for (i = _i = 0; _i < samples; i = _i += 1) {
       output[i] = table[stream.readUInt8()];
     }
     return this.emit('data', output);
@@ -2356,4 +2643,7 @@ XLAWDecoder = (function() {
 
   return XLAWDecoder;
 
-})();
+})(Decoder);
+
+
+

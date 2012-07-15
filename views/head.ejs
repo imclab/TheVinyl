@@ -25,20 +25,22 @@
 <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
 <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
 
-<script src="../socket.io/socket.io.js"></script>
+<script type="text/javascript" src="../js/binarypack.js"></script>
+<script type="text/javascript" src="../js/binary.js"></script>
+<script>
+	var socket = new BinaryClient('ws://localhost:9000');
+	var unsupported;
+	if (!window.Audio || !('mozWriteAudio' in new Audio()) && !window.AudioContext && !window.webkitAudioContext) {
+		unsupported = true;
+	}
+</script>
 <script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="../js/sockets.js"></script>
 <script type="text/javascript" src="../js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../js/underscore.min.js"></script>
 <script type="text/javascript" src="../js/backbone.min.js"></script>
 <script type="text/javascript" src="../js/jquery.jplayer.min.js"></script>
-<script type="text/javascript" src="../js/aurora.min.js"></script>
+<script type="text/javascript" src="../js/aurora.js"></script>
 <script type="text/javascript" src="../js/flac.min.js"></script>
 <script type="text/javascript" src="../js/mp3.min.js"></script>
-<script type="text/javascript" src="../js/player.js"></script>
-<script>
-	var unsupported;
-	if (!window.Audio || !('mozWriteAudio' in new Audio()) && !window.AudioContext && !window.webkitAudioContext) {
-		unsupported = true;
-	}
-</script>
+<script type="text/javascript" src="../js/vinylPlayer.js"></script>
